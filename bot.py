@@ -1,19 +1,3 @@
-"""
-OSINT-бот для Telegram: извлечение EXIF-метаданных из фото
-и поиск публичного присутствия никнейма на разных площадках.
-
-Использует ТОЛЬКО публично доступные HTTP-запросы (проверка,
-существует ли страница с таким юзернеймом) — не обходит
-авторизацию, не парсит закрытые данные, не использует утечки.
-
-Требуемые библиотеки:
-    pip install python-telegram-bot==21.* pillow exifread requests
-
-Запуск:
-    export BOT_TOKEN="твой_токен_от_BotFather"
-    python bot.py
-"""
-
 import logging
 import os
 import io
@@ -36,7 +20,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "ВСТАВЬ_СВОЙ_ТОКЕН_СЮДА")
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 # ---------------------------------------------------------------------------
 # 1. Список площадок для проверки username.
@@ -249,9 +233,11 @@ async def handle_compressed_photo(update: Update, context: ContextTypes.DEFAULT_
 
 
 def main() -> None:
-    if BOT_TOKEN == "ВСТАВЬ_СВОЙ_ТОКЕН_СЮДА":
+    if not BOT_TOKEN:
         raise SystemExit(
-            "Укажи токен бота: export BOT_TOKEN='твой_токен' перед запуском"
+            "Переменная окружения BOT_TOKEN не задана. "
+            "На Railway: Variables → добавить BOT_TOKEN. "
+            "Локально: export BOT_TOKEN='твой_токен'"
         )
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
